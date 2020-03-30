@@ -1,23 +1,22 @@
 package web.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.model.Role;
 import web.repository.RoleRepo;
 
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @Service
-public class RoleServiceImpl implements RoleService{
+public class RoleServiceImpl implements RoleService {
 
     private final RoleRepo roleRepo;
 
     public RoleServiceImpl(RoleRepo roleRepo) {
         this.roleRepo = roleRepo;
     }
+
     @Override
     public List<Role> allRoles() {
         return roleRepo.findAll();
@@ -25,14 +24,19 @@ public class RoleServiceImpl implements RoleService{
 
     @Override
     public void addRole(Role role) {
+        roleRepo.save(role);
     }
 
     @Override
     public void updateRole(Role role) {
+        if (getRoleById(role.getId()).getNameRole().equals(role.getNameRole()) || isRoleNameUnique(role)) {
+            roleRepo.save(role);
+        }
     }
 
     @Override
     public void deleteRole(Long id) {
+        roleRepo.delete(roleRepo.findById(id));
     }
 
     @Override
@@ -41,7 +45,11 @@ public class RoleServiceImpl implements RoleService{
     }
 
     @Override
-    public Role getRoleByName(String role) {
-        return roleRepo.findByNameRole(role);
+    public Role getRoleByName(String role) throws IllegalStateException {
+        return roleRepo.findByNameRole(role).orElseThrow(() -> new IllegalStateException("User not find by name"));
+    }
+
+    private boolean isRoleNameUnique(Role role) {
+        return !roleRepo.findByNameRole(role.getNameRole()).isPresent();
     }
 }

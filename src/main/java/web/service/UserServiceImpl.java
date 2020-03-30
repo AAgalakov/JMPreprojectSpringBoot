@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService{
 
-    private static Logger log = Logger.getLogger(UserServiceImpl.class.getName());
-
     private final UserRepo userRepo;
 
     private final RoleService roleService;
@@ -50,7 +48,6 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public boolean updateUser(UserDto userDto) {
-        log.info(userDto.toString());
         if (getUserById(userDto.getId()).getName().equals(userDto.getName()) || isNameUnique(userDto)) {
             User user = fromForm(userDto);
             userRepo.save(user);

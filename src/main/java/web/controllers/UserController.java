@@ -2,9 +2,9 @@ package web.controllers;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import web.dto.UserDto;
 import web.service.UserService;
 
@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ModelAndView getUserPage(Authentication authentication) {
-        UserDto userDto = new UserDto(userService.getUserByName(authentication.getName()));
-        return new ModelAndView("userPage", "user", userDto);
+    public String getUserPage(Authentication authentication, Model model) {
+        model.addAttribute("user", new UserDto(userService.getUserByName(authentication.getName())));
+        return "userPage";
     }
 }
